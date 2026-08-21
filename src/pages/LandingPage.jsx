@@ -1,11 +1,11 @@
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ChevronRight, BarChart3, Shield, Zap } from "lucide-react";
 
 export default function LandingPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 pt-20 pb-10 text-center">
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
@@ -40,7 +40,7 @@ export default function LandingPage() {
             View Live Results
           </Link>
         </div>
-      </motion.div>
+      </Motion.div>
 
       <div className="grid md:grid-cols-3 gap-8 mt-32">
         {[
@@ -60,7 +60,7 @@ export default function LandingPage() {
             desc: "Dynamic Recharts data viz",
           },
         ].map((feat, i) => (
-          <motion.div
+          <Motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -70,7 +70,7 @@ export default function LandingPage() {
             <div className="mb-4">{feat.icon}</div>
             <h3 className="text-xl font-bold text-white mb-2">{feat.title}</h3>
             <p className="text-gray-400">{feat.desc}</p>
-          </motion.div>
+          </Motion.div>
         ))}
       </div>
     </div>

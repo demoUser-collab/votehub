@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { Vote, LogOut, ShieldCheck } from "lucide-react";
 
 export default function Navbar() {
-  const { user, userData, logout } = useAuth();
+  const { user, logout } = useAuth();
   const isAdmin = user?.email === "admin@voting.com";
 
   return (

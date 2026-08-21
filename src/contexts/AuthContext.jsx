@@ -58,6 +58,7 @@ export const AuthProvider = ({ children }) => {
 };
 
 // THIS IS THE PART THE ERROR IS COMPLAINING ABOUT:
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
