@@ -13,10 +13,44 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [voter, setVoter] = useState(() => {
+    const saved = localStorage.getItem("votehub_voter");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [votingToken, setVotingToken] = useState(() => {
+    return localStorage.getItem("votehub_token") || null;
+  });
   const [loading, setLoading] = useState(true);
 
   const loginWithEmail = (email, password) => signInWithEmailAndPassword(auth, email, password);
-  
+
+  const loginWithVoterId = async (credentials) => {
+    const voterData = typeof credentials === "object" 
+      ? credentials 
+      : { voterId: credentials, idType: "voter_id" };
+
+    const mockToken = "vt_live_" + Math.random().toString(36).substring(2, 15);
+    const sessionVoter = { ...voterData, hasVoted: false };
+
+    setVoter(sessionVoter);
+    setVotingToken(mockToken);
+
+    localStorage.setItem("votehub_voter", JSON.stringify(sessionVoter));
+    localStorage.setItem("votehub_token", mockToken);
+
+    return true;
+  };
+
+  const consumeVotingToken = () => {
+    setVotingToken(null);
+    localStorage.removeItem("votehub_token");
+    if (voter) {
+      const updated = { ...voter, hasVoted: true };
+      setVoter(updated);
+      localStorage.setItem("votehub_voter", JSON.stringify(updated));
+    }
+  };
+
   const registerWithEmail = async (email, password, name) => {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     await setDoc(doc(db, "users", res.user.uid), {
@@ -28,7 +62,13 @@ export const AuthProvider = ({ children }) => {
     return res;
   };
 
-  const logout = () => signOut(auth);
+  const logout = () => {
+    setVoter(null);
+    setVotingToken(null);
+    localStorage.removeItem("votehub_voter");
+    localStorage.removeItem("votehub_token");
+    return signOut(auth);
+  };
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, (u) => {
@@ -51,7 +91,20 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, userData, loginWithEmail, registerWithEmail, logout, loading }}>
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        userData, 
+        voter, 
+        votingToken, 
+        loginWithEmail, 
+        loginWithVoterId, 
+        consumeVotingToken, 
+        registerWithEmail, 
+        logout, 
+        loading 
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
